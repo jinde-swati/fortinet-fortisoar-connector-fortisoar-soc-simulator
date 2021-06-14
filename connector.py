@@ -20,7 +20,6 @@ class FortiSOARSocSimulator(Connector):
         if(config.get('import_records')):
           for scenario in scenarios:
               record_data_file = os.path.join(os.path.dirname(__file__),"scenarios/"+scenario+"/scenario_record.json")
-              logger.warn(record_data_file)
               record_data = json.load(open(record_data_file, "rb"))
               records = record_data.get('records')
               import_records(records,scenario) 
