@@ -1,5 +1,6 @@
 from connectors.core.connector import Connector
 from connectors.core.connector import get_logger, ConnectorError
+from .operations import operations, _check_health
 from django.utils.module_loading import import_string
 from .utils import *
 from .constants import LOGGER_NAME 
@@ -25,7 +26,8 @@ class FortiSOARSocSimulator(Connector):
               import_records(records,scenario) 
 
     def execute(self, config, operation, params, *args, **kwargs):
-        return supported_operations.get(operation)(config, params)
+        action = operations.get(operation)
+        return action(params)
 
     def check_health(self, config=None, *args, **kwargs):
-        pass
+        _check_health()
