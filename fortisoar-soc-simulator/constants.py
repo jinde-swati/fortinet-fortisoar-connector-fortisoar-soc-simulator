@@ -1,0 +1,2 @@
+LOGGER_NAME = 'soc_scenario'
+CONNECTOR_VERSION = '1.0.6'
