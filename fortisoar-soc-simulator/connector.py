@@ -14,7 +14,7 @@ class FortiSOARSocSimulator(Connector):
     def on_add_config(self, config, active):
         scenarios = next(os.walk(os.path.join(os.path.dirname(__file__),"scenarios")))[1]
         
-        if(config.get('threatIntel')):
+        if(config.get('load_threat')):
           load_threat()
         
         
@@ -33,7 +33,7 @@ class FortiSOARSocSimulator(Connector):
               records = record_data.get('records')
               import_records(records,scenario)
         
-        if new_config.get('threatIntel'):
+        if new_config.get('load_threat'):
           load_threat()
 
     def execute(self, config, operation, params, *args, **kwargs):

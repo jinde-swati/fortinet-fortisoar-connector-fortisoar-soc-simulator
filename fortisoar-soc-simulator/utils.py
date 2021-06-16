@@ -13,7 +13,7 @@ supported_operations = {}
 def import_records(records,scenario): 
     for record in records:
         scenario_title = record['title']
-        record['title']= record['title']+"_"+CONNECTOR_VERSION
+        #Check If record exists , if does then update other wise create
         result = make_request("/api/3/scenario/{}".format(record['uuid']), "GET")
         if result.status_code == 200:
             url = "/api/3/scenario/{}".format(record['uuid'])
@@ -24,15 +24,31 @@ def import_records(records,scenario):
         else:
             logger.error("Error getting record information.")
             raise ConnectorError("Error getting record information.")
-
+        #Add Record
         res = make_request(url, method, body=record)
+        if not (res.ok):
+            logger.debug("Error with creating or updating scenarios.")
+            raise ConnectorError("Error with creating or updating scenarios.")
+
+        #Check if configuration for scenario exists 
+        body = {"sort": [{"field": "modifyDate","direction": "DESC"}],"logic": "AND","filters": [],"__selectFields": ["file","status"]}
+        url = "/api/query/import_jobs"
+        res = make_request(url,"POST",body=body)
+        res = res.json()
+        scenario_data = res.get('hydra:member')
+
+        for item in scenario_data:
+            if (item['file']['filename'] == scenario_title):
+                logger.debug("Deleting Configuration {}".format(scenario_title))
+                id = item['@id'].split('/')[-1]
+                url = "/api/3/delete/import_jobs"
+                body = {"ids":[id]}
+                make_request(url,"DELETE",body=body)
+                logger.debug("Deleted Configuration {}".format(scenario_title))
 
         scenario_path=os.path.join(os.path.dirname(__file__), "scenarios/"+scenario+"/scenario_configuration.json")
         if(os.path.exists(scenario_path)):
             set_config_job(scenario_title,scenario,scenario_title=scenario_title)
-            if not (res.ok):
-                logger.debug("Error with creating or updating scenarios.")
-                raise ConnectorError("Error with creating or updating scenarios.")
         else:
             logger.debug("Scenario {} does not have configruation file".format(scenario_title))
 
@@ -44,7 +60,7 @@ def set_config_job(filename,scenario,scenario_title):
     
 def _upload_file(data_path,scenario_title):
     file = open(data_path, 'rb')
-    file_name = scenario_title + "_" + CONNECTOR_VERSION
+    file_name = scenario_title
     multipart_headers = {'Expire': 0}
     request_headers = {}
     extra_fields = {}
@@ -76,7 +92,7 @@ def load_threat():
     },
     {
         "name": "bad_domains",
-        "url": "https://osint.bambenekconsulting.com/feeds/c2-dommasterlist-high.txt",
+        "url": "https://malsilo.gitlab.io/feeds/dumps/domain_list.txt",
         "filename": "malicious_domains"
     }, {
         "name": "bad_urls",
@@ -84,7 +100,7 @@ def load_threat():
         "filename": "malicious_urls"
     }
     ]
-    threat_intel_dir = "{}/threatIntel/".format(os.path.dirname(__file__))
+    threat_intel_dir = "{}/threat_intelligence/".format(os.path.dirname(__file__))
     for item in threat_data:
         lines=''
         try:
@@ -98,8 +114,8 @@ def load_threat():
                     next(cr)
                 bad_list = list(cr)
                 if item.get('name') == 'bad_domains':
-                    for row in bad_list[2:]:
-                        lines+=row[0]+'\n'
+                    for row in bad_list:
+                        lines+=row[2]+'\n'
                 elif item.get('name') == 'bad_ip':
                     for row in bad_list:
                         lines+=row[2].split(':')[0]+'\n'
