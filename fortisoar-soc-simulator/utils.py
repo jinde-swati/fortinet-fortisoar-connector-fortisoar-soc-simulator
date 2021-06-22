@@ -10,9 +10,13 @@ logger = get_logger('soc_scenario')
   
 supported_operations = {}
 
-def import_records(records,scenario): 
+def import_records(records,scenario):
+    get_config_job() 
     for record in records:
         scenario_title = record['title']
+        scenario_path=os.path.join(os.path.dirname(__file__), "scenarios/"+scenario+"/scenario_configuration.json")
+        if(os.path.exists(scenario_path)):
+            record['configuration'] = scenario.title()
         #Check If record exists , if does then update other wise create
         result = make_request("/api/3/scenario/{}".format(record['uuid']), "GET")
         if result.status_code == 200:
@@ -30,31 +34,36 @@ def import_records(records,scenario):
             logger.debug("Error with creating or updating scenarios.")
             raise ConnectorError("Error with creating or updating scenarios.")
 
-        #Check if configuration for scenario exists 
-        body = {"sort": [{"field": "modifyDate","direction": "DESC"}],"logic": "AND","filters": [],"__selectFields": ["file","status"]}
-        url = "/api/query/import_jobs"
-        res = make_request(url,"POST",body=body)
-        res = res.json()
-        scenario_data = res.get('hydra:member')
+        #Check if configuration for scenario exists , if does then delete it
+   
 
         for item in scenario_data:
-            if (item['file']['filename'] == scenario_title):
-                logger.debug("Deleting Configuration {}".format(scenario_title))
+            if (item['file']['filename'] == scenario.title()):
+                logger.debug("Deleting Configuration {}".format(scenario.title()))
                 id = item['@id'].split('/')[-1]
                 url = "/api/3/delete/import_jobs"
                 body = {"ids":[id]}
                 make_request(url,"DELETE",body=body)
-                logger.debug("Deleted Configuration {}".format(scenario_title))
+                logger.debug("Deleted Configuration {}".format(scenario.title()))
 
-        scenario_path=os.path.join(os.path.dirname(__file__), "scenarios/"+scenario+"/scenario_configuration.json")
-        if(os.path.exists(scenario_path)):
-            set_config_job(scenario_title,scenario,scenario_title=scenario_title)
-        else:
-            logger.debug("Scenario {} does not have configruation file".format(scenario_title))
+    scenario_path=os.path.join(os.path.dirname(__file__), "scenarios/"+scenario+"/scenario_configuration.json")
+    if(os.path.exists(scenario_path)):
+        set_config_job(scenario_path,scenario_title=scenario)
+    else:
+        logger.debug("Scenario {} does not have configruation file".format(scenario))
 
-def set_config_job(filename,scenario,scenario_title):
-    file_path=os.path.join(os.path.dirname(__file__), "scenarios/"+scenario+"/scenario_configuration.json")
-    file_iri= _upload_file(file_path,scenario_title=scenario_title)
+def get_config_job():
+    global scenario_data
+    body = {"sort": [{"field": "modifyDate","direction": "DESC"}],"logic": "AND","filters": [],"__selectFields": ["file","status"]}
+    url = "/api/query/import_jobs?$limit=3000"
+    res = make_request(url,"POST",body=body)
+    res = res.json()
+    scenario_data = res.get('hydra:member')
+    return scenario_data
+
+def set_config_job(scenario_path,scenario_title):
+    file_path=scenario_path
+    file_iri= _upload_file(file_path,scenario_title=scenario_title.title())
     _create_import_job(file_iri)
     
     
