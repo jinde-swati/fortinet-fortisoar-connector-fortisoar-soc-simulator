@@ -33,7 +33,7 @@ There are two ways to create a scenario record
 
 ##### Scenario record referring playbook for creation of demo record 
 While creating scenario add following in Steps section under 'Source' tab . Replace values at appropriate location 
-
+<p>
 {
   "Steps": [
     {
@@ -46,9 +46,10 @@ While creating scenario add following in Steps section under 'Source' tab . Repl
     }
   ]
 }
-
+</p>
 
 >Complete Example
+<p>
 {
   "Steps": [
     {
@@ -61,12 +62,13 @@ While creating scenario add following in Steps section under 'Source' tab . Repl
     }
   ]
 }
-
+</p>
 Note : Here we cannot set placeholder for a value to replaced dynamically while creation of demo record 
 
 ##### Scenario record referring alert playload
 
 While creating scenario add following in Steps section under 'Source' tab . Replace values at appropriate location 
+<p>
  {
   "Steps": [
     {
@@ -81,8 +83,9 @@ While creating scenario add following in Steps section under 'Source' tab . Repl
     }
   ]
 }
-
+</p>
 > Complete Example
+<p>
 {
   "Steps": [
     {
@@ -110,7 +113,7 @@ While creating scenario add following in Steps section under 'Source' tab . Repl
     }
   ]
 }
-
+</p>
 Here "sourceIp": "{TR_MALICIOUS_IP}"   << this is an example set a placeholder where you want to change value of , here, sourceIP dynamically when demo record is created
 
 Refer for more details about content pack: https://fusecommunity.fortinet.com/viewdocument/incident-response-content-pack?CommunityKey=9f1420e8-e3c6-4535-8cae-3fa714da66d8&tab=librarydocuments
