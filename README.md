@@ -11,9 +11,10 @@ Once you have configured the FortiSOAR SOC Simulator connector, sample scenarios
 ### Contributing Scenario
 
 First you will have to fork git repo https://github.com/fortinet-fortisoar/connector-fortisoar-soc-simulator. Here you will create a folder under 'scenarios' folder. The folder that you will create will contain two files
->> **scenario_record.json**
+> **scenario_record.json**
    This file is scenario record
->>**scenarion_configuration.json**
+   
+> **scenarion_configuration.json**
    This file is configuration export for a scenario
 
 Lets discuss process in brief
