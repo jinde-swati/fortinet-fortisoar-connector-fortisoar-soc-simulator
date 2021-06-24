@@ -14,7 +14,7 @@
             {
                 "@context": "\/api\/3\/contexts\/WorkflowCollection",
                 "@type": "WorkflowCollection",
-                "name": "Phishing Scenario",
+                "name": "16 - Scenario - Phishing Scenario",
                 "description": "Contains required playbooks for phishing scenario",
                 "visible": true,
                 "workflows": [
