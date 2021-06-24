@@ -14,7 +14,7 @@
             {
                 "@context": "\/api\/3\/contexts\/WorkflowCollection",
                 "@type": "WorkflowCollection",
-                "name": "Compromised Credentials Scenario",
+                "name": "16 - Scenario - Compromised Credentials Scenario",
                 "description": "Contains required playbooks for compromised credential scenario",
                 "visible": true,
                 "workflows": [
