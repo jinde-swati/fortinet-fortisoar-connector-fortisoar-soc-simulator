@@ -14,7 +14,7 @@
             {
                 "@context": "\/api\/3\/contexts\/WorkflowCollection",
                 "@type": "WorkflowCollection",
-                "name": "Brute Force Attack Scenario",
+                "name": "16 - Scenario - Brute Force Attack Scenario",
                 "description": "Contains required playbooks for brute force attack scenario",
                 "visible": true,
                 "workflows": [
